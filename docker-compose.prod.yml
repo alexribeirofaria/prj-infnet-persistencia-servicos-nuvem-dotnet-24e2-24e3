@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  pixchargespa-prod:
+    container_name: prod
+    image: alexfariakof/pix-charge-prod-img
+    build:
+      context: .
+      dockerfile: PixCharge.SPA/Dockerfile-Production
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80;https://+:443
+    ports:
+       - 80:80
+       - 443:443
+
+

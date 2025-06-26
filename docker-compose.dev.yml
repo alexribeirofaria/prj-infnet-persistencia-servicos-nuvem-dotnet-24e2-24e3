@@ -1,0 +1,14 @@
+version: '3.4'
+services:
+  pixchargespa-dev:
+    container_name: dev
+    image: alexfariakof/pix-charge-dev-img
+    build:
+      context: .
+      dockerfile: PixCharge.SPA/Dockerfile-Development
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+2000;https://+2001;
+    ports:
+       - 2000:2000
+       - 2001:2001

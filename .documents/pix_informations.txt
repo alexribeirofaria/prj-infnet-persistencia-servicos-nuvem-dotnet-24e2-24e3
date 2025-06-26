@@ -1,0 +1,5 @@
+Especificação da API Pix
+https://github.com/bacen/pix-api?tab=readme-ov-file
+
+Manuais e Regulamentações relacionada ao Pix
+https://www.bcb.gov.br/estabilidadefinanceira/pix?modalAberto=regulamentacao_pix

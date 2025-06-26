@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 as base
+WORKDIR /app
+EXPOSE 2000
+EXPOSE 2001
+RUN dotnet dev-certs https -ep ${HOME}/.aspnet/https/PixCharge.SPA.pfx -p ${HOME}/.aspnet/https
+RUN dotnet dev-certs https --trust
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS publish
+WORKDIR /src
+COPY . .
+RUN dotnet publish -c Release -o /app/publish  /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 as final
+WORKDIR /app
+ENV ASPNETCORE_ENVIRONMENT=Staging
+ENV ASPNETCORE_URLS=http://+2000;https://+2001;
+ENV ASPNETCORE_HTTP_PORT=2000
+ENV ASPNETCORE_HTTPS_PORT=2001
+
+COPY --from=base /root ../root
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "PixCharge.SPA.dll"]
