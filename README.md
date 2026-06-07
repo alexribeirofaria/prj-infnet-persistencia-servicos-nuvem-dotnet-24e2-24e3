@@ -1,4 +1,4 @@
-# PixCharge
+# Projeto Infnet Persistência de Servicos em Nuvem usando .Net - PixCharge
 
 > API .NET para gestão de clientes, planos e cobranças PIX, com persistência em SQL Server, autenticação JWT, integração OpenPix e arquitetura em camadas.
 
@@ -13,19 +13,20 @@
   - [🎯 Objetivos do projeto](#-objetivos-do-projeto)
   - [🧩 Funcionalidades](#-funcionalidades)
   - [🏗️ Arquitetura da solução](#️-arquitetura-da-solução)
+    - [Diagrama de Arquitetura - Visão geral da solução](#diagrama-de-arquitetura---visão-geral-da-solução)
     - [Camadas](#camadas)
-    - [Fluxo lógico](#fluxo-lógico)
+    - [Diagrama de Arquitetura - Fluxo lógico](#diagrama-de-arquitetura---fluxo-lógico)
   - [🧬 Modelo de domínio](#-modelo-de-domínio)
-    - [Diagrama de classes](#diagrama-de-classes)
+    - [Diagrama de Classes - Modelo de domínio](#diagrama-de-classes---modelo-de-domínio)
     - [Regras de domínio relevantes](#regras-de-domínio-relevantes)
   - [🌐 API HTTP](#-api-http)
     - [Autenticação](#autenticação)
     - [Clientes](#clientes)
     - [Cobranças](#cobranças)
   - [🔁 Fluxos principais](#-fluxos-principais)
-    - [Cadastro de cliente](#cadastro-de-cliente)
-    - [Criação de cobrança PIX](#criação-de-cobrança-pix)
-    - [Consulta de cobrança](#consulta-de-cobrança)
+    - [Diagrama de Atividades - Cadastro de cliente](#diagrama-de-atividades---cadastro-de-cliente)
+    - [Diagrama de Atividades - Criação de cobrança PIX](#diagrama-de-atividades---criação-de-cobrança-pix)
+    - [Diagrama de Atividades - Consulta de cobrança](#diagrama-de-atividades---consulta-de-cobrança)
   - [🗄️ Persistência e dados iniciais](#️-persistência-e-dados-iniciais)
     - [Seed de dados](#seed-de-dados)
   - [🔌 Integrações externas](#-integrações-externas)
@@ -105,6 +106,8 @@ A solução contempla:
 
 O projeto segue uma organização em camadas, com separação clara entre entrada HTTP, orquestração de casos de uso, domínio, persistência e adapters externos.
 
+### Diagrama de Arquitetura - Visão geral da solução
+
 ```mermaid
 flowchart LR
     Client[Cliente HTTP / Swagger] --> Api[PixCharge.Api]
@@ -133,7 +136,7 @@ flowchart LR
 | 🧱 Migrations | `PixCharge.Infrastructure.Migrations_MsSqlServer` | Migrations EF Core para SQL Server e host auxiliar de execução. |
 | 🧪 Testes | `PixCharge.Test` | Testes unitários e de integração por camada. |
 
-### Fluxo lógico
+### Diagrama de Arquitetura - Fluxo lógico
 
 ```mermaid
 sequenceDiagram
@@ -167,7 +170,7 @@ O domínio está organizado em três áreas principais: **Account**, **Transacti
 | 🧱 Core | `BaseModel`, `Crypto`, `Monetary` | Identidade base, criptografia e valor monetário. |
 | 📦 Value Objects | `Address`, `Login`, `Phone`, `QRCode`, `Status`, `TransactionType` | Tipos de valor e validações específicas do domínio. |
 
-### Diagrama de classes
+### Diagrama de Classes - Modelo de domínio
 
 ```mermaid
 classDiagram
@@ -391,7 +394,7 @@ Exemplo de criação:
 
 ## 🔁 Fluxos principais
 
-### Cadastro de cliente
+### Diagrama de Atividades - Cadastro de cliente
 
 ```mermaid
 flowchart TD
@@ -406,7 +409,7 @@ flowchart TD
     I --> J[Retorna CustomerDto]
 ```
 
-### Criação de cobrança PIX
+### Diagrama de Atividades - Criação de cobrança PIX
 
 ```mermaid
 flowchart TD
@@ -424,17 +427,17 @@ flowchart TD
     K --> L[Retorna ChargeDto]
 ```
 
-### Consulta de cobrança
+### Diagrama de Atividades - Consulta de cobrança
 
 ```mermaid
 flowchart TD
-    A[GET /api/Charge/{id}] --> B[Busca Charge no repositório]
-    B --> C[OpenPix.IsChargeApporve]
-    C --> D{Status COMPLETED?}
-    D -- Sim --> E[Atualiza Charge.Status e PIX.Status]
-    E --> F[Repository.Update]
-    D -- Não --> G[Mantém status atual]
-    F --> H[Retorna ChargeDto]
+    A["GET /api/Charge/{chargeId}"] --> B["Busca Charge no repositório"]
+    B --> C["Consulta OpenPix.IsChargeApporve(correlationId)"]
+    C --> D{"Status externo é COMPLETED?"}
+    D -- "Sim" --> E["Atualiza Charge.Status e PIX.Status"]
+    E --> F["Repository.Update"]
+    D -- "Não" --> G["Mantém status atual"]
+    F --> H["Retorna ChargeDto"]
     G --> H
 ```
 
