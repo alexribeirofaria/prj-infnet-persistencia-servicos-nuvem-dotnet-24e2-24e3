@@ -1,4 +1,4 @@
-# Projeto Infnet Persistência de Servicos em Nuvem usando .Net - PixCharge
+# Projeto Infnet Persistência de Serviços em Nuvem usando .Net - PixCharge
 
 > API .NET para gestão de clientes, planos e cobranças PIX, com persistência em SQL Server, autenticação JWT, integração OpenPix e arquitetura em camadas.
 
